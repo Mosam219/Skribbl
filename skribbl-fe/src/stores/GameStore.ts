@@ -26,6 +26,9 @@ class GameStore {
   }
 
   @observable
+  private __myId?: string;
+
+  @observable
   private _gameState: GameStateEnum;
 
   @observable
@@ -98,6 +101,11 @@ class GameStore {
   }
 
   @action
+  public setMe = (id: string) => {
+    this.__myId = id;
+  };
+
+  @action
   public setSettings = (settings: RoomSetting) => {
     this._settings = settings;
   };
@@ -134,14 +142,22 @@ class GameStore {
 
   @action
   public setGameState = (gameState: GameStateEnum) => {
-    console.log(gameState);
     this._gameState = gameState;
-    console.log(this._gameState);
   };
 
   @computed
   public get gameState(): GameStateEnum {
     return this._gameState;
+  }
+
+  @computed
+  public get getMe(): string | undefined {
+    return this.__myId;
+  }
+
+  @computed
+  public get drawAccess(): boolean {
+    return this.getMe == this._turnPlayerId;
   }
 
   @action

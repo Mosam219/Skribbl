@@ -6,6 +6,7 @@ import React from "react";
 import { canvasService } from "../../services/CanvasService";
 import { ACTIONS_BTN } from "../EntryScreen/constants";
 import { roundService } from "../../services/RoundService";
+import ChatArea from "../../components/ChatArea";
 
 const Game = () => {
   const [tool, setTool] = React.useState<number>(0);
@@ -14,8 +15,6 @@ const Game = () => {
   const choosing = gameStore.choosing;
   const drawerId = gameStore.turnPlayerId;
   const drawer = gameStore.getPlayerById(drawerId);
-
-  console.log(choosing);
 
   const handleToolChange = (value: number) => {
     if (value === 2) {
@@ -27,6 +26,7 @@ const Game = () => {
   const setWord = (item: string) => {
     gameStore.setCurrentWord(item);
     gameStore.setChoosing(false);
+    roundService.wordRevealClient(item);
   };
   return (
     <div className="h-full w-full flex justify-center items-center">
@@ -61,23 +61,25 @@ const Game = () => {
           ) : (
             <div>
               <Canvas height={300} width={300} tool={tool} />
-              <div className="flex justify-around w-full">
-                {Object.values(ACTIONS_BTN).map((item, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleToolChange(index)}
-                    className="font-bold underline cursor-pointer text-slate-600"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
+              {gameStore.drawAccess ? (
+                <div className="flex justify-around w-full">
+                  {Object.values(ACTIONS_BTN).map((item, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleToolChange(index)}
+                      className="font-bold underline cursor-pointer text-slate-600"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           )}
         </div>
         <div className="bg-slate-300 w-1/5 overflow-auto flex-col justify-center">
-          <div className="text-center font-bold text-slate-500">Players</div>
-          <Players players={userList} />
+          <div className="text-center font-bold text-slate-500">Chat</div>
+          <ChatArea />
         </div>
       </div>
     </div>

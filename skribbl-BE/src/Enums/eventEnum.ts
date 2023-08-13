@@ -3,6 +3,7 @@ export enum EventEnum {
   ROUND_SYNC = "/game/round/sync",
   CREATE = "/game/create",
   JOIN = "/game/join",
-  WORD_REVEAL = "game/word_reveal",
+  CHAT = "/game/chat",
+  WORD_REVEAL = "/game/word_reveal",
   ERROR = "error",
 }

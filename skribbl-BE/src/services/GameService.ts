@@ -23,7 +23,6 @@ class GameService {
       includeUpperCase: true,
       includeNumbers: false,
     });
-    console.log("payload", payload);
     const room = new Room(roomId);
     const player = room.addPlayer(socket, {
       id: socket.id,
@@ -77,13 +76,11 @@ class GameService {
 
   public startGame = (socket: Socket, settings: RoomSettings) => {
     const roomAndPlayer = gameHelperService.getPlayerAndRoom(socket);
-    console.log(roomAndPlayer);
     if (!roomAndPlayer) {
       console.log("player Or Room not found");
       return;
     }
     const { room, player } = roomAndPlayer;
-    console.log(player, room);
 
     // updating settings for game
     room.setSettings(settings);
@@ -91,7 +88,6 @@ class GameService {
     const playerIds = room.getPlayers();
     const drawPlayerId = Helper.getRandom<string>(playerIds);
     const drawer = mapService.getEntity<Player>(drawPlayerId);
-    console.log("drawer", drawer);
     if (!drawer) return;
 
     room.setCurrentPlayerIndex(room.getPlayers().indexOf(drawer.id));

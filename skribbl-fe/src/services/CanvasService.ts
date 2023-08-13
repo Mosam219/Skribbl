@@ -1,5 +1,6 @@
 import { socketService } from "./SocketService";
 import { canvasStore } from "../stores/CanvasStore";
+import { gameStore } from "../stores/GameStore";
 
 class CanvasService {
   private static __instance: CanvasService | null;
@@ -16,19 +17,31 @@ class CanvasService {
     return this.__instance;
   }
   public init(): void {
-    console.log("initiated canvas service");
-    socketService.registerEvent("draw", (value: Array<Array<number>>) => {
-      console.log(value);
-      value.map((item) => this.draw(item[0], item[1], item[2], item[3]));
-    });
+    socketService.registerEvent(
+      "draw",
+      ({
+        batches,
+        drawer,
+      }: {
+        batches: Array<Array<number>>;
+        drawer: boolean;
+      }) => {
+        console.log(batches, drawer);
+        batches.map((item) =>
+          this.draw(item[0], item[1], item[2], item[3], item[4], drawer)
+        );
+      }
+    );
   }
   public draw(
     startX: number,
     startY: number,
     currX: number,
-    currY: number
+    currY: number,
+    type: number,
+    server: boolean = false
   ): void {
-    console.log("hey");
+    if (!server && !gameStore.drawAccess) return;
     const canvas = canvasStore?.Canvas;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -36,7 +49,10 @@ class CanvasService {
     ctx.beginPath();
     ctx.moveTo(startX, startY);
     ctx.lineTo(currX, currY);
-    ctx.fillStyle = "black";
+    console.log(type);
+    if (type === 2) {
+      ctx.fillStyle = "black";
+    } else ctx.fillStyle = "white";
     ctx.stroke();
   }
   public erase(currX: number, currY: number, size: number = 20): void {
@@ -60,7 +76,10 @@ class CanvasService {
     this.batches.push(command);
     if (!this.requestedTime) {
       setTimeout(() => {
-        socketService.emitEvent("draw", this.batches);
+        socketService.emitEvent("draw", {
+          batches: this.batches,
+          drawer: gameStore.drawAccess,
+        });
         this.requestedTime = false;
         this.batches = [];
       }, this.TIME_DELAY);

@@ -26,6 +26,7 @@ class SocketService {
       GameHandlers.startGame(socket);
       GameHandlers.wordReveal(socket);
       GameHandlers.gameRoundSyncHandler(socket);
+      GameHandlers.gameChatHandler(socket);
     });
   }
 

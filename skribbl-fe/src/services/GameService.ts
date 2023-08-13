@@ -52,6 +52,10 @@ class GameService {
       if (res.players) res.players.map((item) => gameStore.addPlayer(item));
       if (res.player) gameStore.addPlayer(res.player);
     }
+
+    if (res.me) {
+      gameStore.setMe(res.me);
+    }
   };
 
   public startGameClient = () => {

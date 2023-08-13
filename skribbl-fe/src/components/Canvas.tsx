@@ -52,9 +52,15 @@ const Canvas = (props: Props) => {
       const currentX = offsetX;
       const currentY = offsetY;
       if (props.tool === 0)
-        canvasService.draw(start.x, start.y, currentX, currentY);
+        canvasService.draw(start.x, start.y, currentX, currentY, 1);
       else canvasService.erase(currentX, currentY, 20);
-      canvasService.serializeCanvas([start.x, start.y, currentX, currentY]);
+      canvasService.serializeCanvas([
+        start.x,
+        start.y,
+        currentX,
+        currentY,
+        props.tool === 0 ? 2 : 1,
+      ]);
       setStart({ x: currentX, y: currentY });
     },
     [start]

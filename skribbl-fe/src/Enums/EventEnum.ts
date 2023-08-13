@@ -4,5 +4,6 @@ export enum EventEnum {
   ROOM_SYNC = "/game/room/sync",
   ROUND_SYNC = "/game/round/sync",
   WORD_REVEAL = "/game/word_reveal",
+  CHAT = "/game/chat",
   ERROR = "game/error",
 }

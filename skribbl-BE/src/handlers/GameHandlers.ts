@@ -8,9 +8,16 @@ import { RoomSettings } from "../types/gameService.types";
 import { roundService } from "../services/RoundService";
 
 const drawMessage = (socket: Socket) => {
-  socket.on("draw", (value: any) => {
-    socketService.sendToAll(socket, "draw", value);
-  });
+  socket.on(
+    "draw",
+    ({ batches, drawer }: { batches: any; drawer: boolean }) => {
+      drawer &&
+        socketService.sendToAll(socket, "draw", {
+          batches,
+          drawer,
+        });
+    }
+  );
 };
 
 const createGame = (socket: Socket) => {
@@ -35,14 +42,23 @@ const startGame = (socket: Socket) => {
 };
 
 const wordReveal = (socket: Socket) => {
-  socket.on(EventEnum.WORD_REVEAL, () => {
-    roundService.wordReveal(socket);
+  console.log("setting");
+  socket.on(EventEnum.WORD_REVEAL, ({ word }: { word: string }) => {
+    console.log("word", word);
+    roundService.wordReveal(socket, word);
   });
 };
 
 const gameRoundSyncHandler = (socket: Socket) => {
   socket.on(EventEnum.ROUND_SYNC, (data: { chosen_word?: string }) => {
     roundService.roundSync(socket, data.chosen_word);
+  });
+};
+
+const gameChatHandler = (socket: Socket) => {
+  socket.on(EventEnum.CHAT, (data: { msg: string }) => {
+    console.log(data.msg);
+    roundService.gameChat(socket, data.msg);
   });
 };
 
@@ -53,4 +69,5 @@ export const GameHandlers = {
   startGame,
   wordReveal,
   gameRoundSyncHandler,
+  gameChatHandler,
 };
